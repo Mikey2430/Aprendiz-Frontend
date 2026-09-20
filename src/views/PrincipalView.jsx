@@ -1,22 +1,46 @@
 import React, { useState } from "react";
+<<<<<<< HEAD
 import {
   Box, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Typography, Button, TextField, Stack, CssBaseline
 } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
+=======
+import { Box, CssBaseline } from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+import {
+  ActionBar,
+  AprendizForm,
+  AprendizTable
+} from "../components/aprendizComponents";
+
+import {
+  aprendizService,
+  formInitialState
+} from "../services/aprendizService";
+>>>>>>> Feature/Cambios
 
 const theme = createTheme({
   palette: {
     mode: "dark",
+<<<<<<< HEAD
     primary: { main: "#22d3ee" },       // cian
     secondary: { main: "#a78bfa" },     // violeta
     error: { main: "#ef4444" },
     background: { default: "#0b1220", paper: "#111827" }, // dark limpio
+=======
+    primary: { main: "#22d3ee" },
+    secondary: { main: "#a78bfa" },
+    error: { main: "#ef4444" },
+    background: { default: "#0b1220", paper: "#111827" },
+>>>>>>> Feature/Cambios
     text: { primary: "#e5e7eb", secondary: "#94a3b8" }
   }
 });
 
+<<<<<<< HEAD
 
 
 const inputSX = {
@@ -33,11 +57,15 @@ const ListaAprendices = () => {
   const API_BASE = "http://localhost:8080/api/v1/aprendiz";
   //const API_BASE = "https://backadso-production.up.railway.app/api/v1/aprendiz"
 
+=======
+const PrincipalView = () => {
+>>>>>>> Feature/Cambios
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState(formInitialState);
   const [idFiltro, setIdFiltro] = useState("");
 
+<<<<<<< HEAD
   const fetchTodos = async () => {  
     try {
       setLoading(true);
@@ -77,19 +105,73 @@ const ListaAprendices = () => {
     setLoading(false);
   }
 };
+=======
+  /* ---------- Handlers ---------- */
+  const fetchTodos = async () => {
+    try {
+      setLoading(true);
+      const result = await aprendizService.fetchTodos();
+      setData(result);
+    } catch (e) {
+      console.error("Error cargando aprendices:", e);
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPorId = async () => {
+    if (!idFiltro) return;
+    try {
+      setLoading(true);
+      const res = await aprendizService.fetchPorId(idFiltro);
+      setData(res ? [res] : []);
+      if (res) {
+        setForm({
+          nombre: res.nombre ?? "",
+          apellido: res.apellido ?? "",
+          email: res.email ?? "",
+          telefono: res.telefono ?? "",
+          direccion: res.direccion ?? "",
+          cedula: res.cedula ?? "",
+          tipoDePrograma: res.tipoDePrograma ?? "",
+          programa: res.programa ?? "",
+          ficha: res.ficha ?? "",
+          regional: res.regional ?? ""
+        });
+      }
+    } catch {
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+>>>>>>> Feature/Cambios
 
   const crearAprendiz = async () => {
     try {
       setLoading(true);
+<<<<<<< HEAD
       await axios.post(API_BASE, form, { headers: { "Content-Type": "application/json" } });
       setForm(formInitialState);  
       await fetchTodos();
     } catch (e) { console.error("Error creando aprendiz:", e); }
     finally { setLoading(false); }
+=======
+      await aprendizService.crear(form);
+      setForm(formInitialState);
+      await fetchTodos();
+    } catch (e) {
+      console.error("Error creando aprendiz:", e);
+    } finally {
+      setLoading(false);
+    }
+>>>>>>> Feature/Cambios
   };
 
   const eliminarPorId = async () => {
     if (!idFiltro) return;
+<<<<<<< HEAD
     try { setLoading(true); await axios.delete(`${API_BASE}/${idFiltro}`); await fetchTodos(); }
     catch (e) { console.error("Error eliminando aprendiz:", e); }
     finally { setLoading(false); }
@@ -109,10 +191,39 @@ const ListaAprendices = () => {
   }
 };   
 
+=======
+    try {
+      setLoading(true);
+      await aprendizService.eliminar(idFiltro);
+      await fetchTodos();
+    } catch (e) {
+      console.error("Error eliminando aprendiz:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const actualizarPorId = async () => {
+    if (!idFiltro) return;
+    try {
+      setLoading(true);
+      await aprendizService.actualizar(idFiltro, form);
+      setForm(formInitialState);
+      await fetchTodos();
+    } catch (e) {
+      console.error("Error actualizando aprendiz:", e.response?.data || e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ---------- Render ---------- */
+>>>>>>> Feature/Cambios
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Box sx={{ mt: 4, px: { xs: 2, md: 4 } }}>
+<<<<<<< HEAD
         {/* Barra de acciones */}
         <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
           <Typography variant="h5" sx={{ flex: 1, fontWeight: 700, color: "text.primary" }}>
@@ -208,9 +319,33 @@ const ListaAprendices = () => {
             </TableBody>
           </Table>
         </TableContainer>
+=======
+        <ActionBar
+          loading={loading}
+          idFiltro={idFiltro}
+          setIdFiltro={setIdFiltro}
+          onFetchTodos={fetchTodos}
+          onFetchPorId={fetchPorId}
+          onEliminar={eliminarPorId}
+          onActualizar={actualizarPorId}
+        />
+
+        <AprendizForm
+          form={form}
+          setForm={setForm}
+          onCrear={crearAprendiz}
+          loading={loading}
+        />
+
+        <AprendizTable data={data} />
+>>>>>>> Feature/Cambios
       </Box>
     </ThemeProvider>
   );
 };
 
+<<<<<<< HEAD
 export default ListaAprendices;
+=======
+export default PrincipalView;
+>>>>>>> Feature/Cambios
